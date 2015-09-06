@@ -1,6 +1,24 @@
-wifi.setmode(wifi.STATION)
-wifi.sta.config("SSID", "pwd")
-wifi.sta.connect()
+SSID=""
+PASSWD=""
+fStatus = file.open("config", "r")
+
+if fStatus ~= nil then
+    SSID=string.sub(file.readline(), 0, -2)
+    PASSWD=string.sub(file.readline(), 0, -2)
+
+    file.close()
+
+    wifi.setmode(wifi.STATION)
+    wifi.sta.config(SSID, PASSWD)
+    wifi.sta.connect()
+    tmr.alarm(0, 5000, 0, function()
+        local status = wifi.sta.status()
+        if status == 2 or status == 3 or station == 4 then
+            print("unable to connect to wifi " .. SSID)
+        end
+    end)
+end
+
 
 dofile("ledstrip.lua")
 
