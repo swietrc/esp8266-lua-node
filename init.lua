@@ -16,18 +16,9 @@ if fStatus ~= nil then
         local status = wifi.sta.status()
         if status == 2 or status == 3 or station == 4 then
             print("unable to connect to wifi " .. SSID)
-            serveWebConfig()
+            dofile("apmode.lua")
+            startAccessPoint()
         end
-    end)
-end
-
-local function serveWebConfig()
-    wifi.setmode(wifi.AP)
-    srv = net.createServer(net.TCP)
-    srv:listen(80, function(conn)
-      conn:on("receive",function(conn, payload)
-        conn:send("Hello!")
-      end)
     end)
 end
 
