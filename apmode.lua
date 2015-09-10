@@ -2,22 +2,30 @@
 -- to enter their wifi credentials
 
 -- Start WiFi access point
-function startAccessPoint() {
+function startAccessPoint()
+    print("Starting Access Point. Please configure the wifi.\n")
+    wifi.ap.config({ssid="Node1", pwd="azertyuiop"})
+    cfg={}
+    cfg.ip="192.168.1.1"
+    cfg.netmask="255.255.255.0"
+    cfg.gateway="192.168.1.1"
+    wifi.ap.setip(cfg)
     wifi.setmode(wifi.SOFTAP)
-    wifi.ap.config({ssid="Node1", pwd="1234"})
-}
+    startHTTPServer()
+end
 
 -- Start the web interface to allow users to type in their Wifi SSID and password
-function startHTTPServer() {
+function startHTTPServer()
     srv = net.createServer(net.TCP)
     srv:listen(80, function(connection)
         connection:on("receive",function(connection, payload)
-            connection:send("Hello!")
+            serveInterface(connection)
+            node.restart()
         end)
     end)
-}
+end
 
-function serveInterface(connection) {
+function serveInterface(connection)
     connection:send("<!DOCTYPE html> ")
     connection:send("<html> ")
     connection:send("<body> ")
@@ -35,4 +43,5 @@ function serveInterface(connection) {
     connection:send("<input type='text' name='Password' value='' maxlength='100'/>")
     connection:send("<input type='submit' value='Submit' />")
     connection:send("</form> </html>")
-}
+    connection:close()
+end
