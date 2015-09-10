@@ -7,20 +7,24 @@ if fStatus ~= nil then
     PASSWD=string.sub(file.readline(), 0, -2)
 
     file.close()
-
+    print("Trying to connect to " .. SSID .. "\n")
     wifi.setmode(wifi.STATION)
     wifi.sta.config(SSID, PASSWD)
     wifi.sta.connect()
 
-    tmr.alarm(0, 5000, 0, function()
-        local status = wifi.sta.status()
-        if status == 2 or status == 3 or station == 4 then
-            print("unable to connect to wifi " .. SSID)
-            dofile("apmode.lua")
-            startAccessPoint()
-        end
-    end)
 end
+
+
+function checkWifiStatus()
+    status = wifi.sta.status()
+    if status == 2 or status == 3 or station == 4 then
+        print("unable to connect to wifi " .. SSID)
+        dofile("apmode.lua")
+        startAccessPoint()
+    end
+end
+
+tmr.alarm(0, 10000, 0, checkWifiStatus)
 
 dofile("ledstrip.lua")
 
